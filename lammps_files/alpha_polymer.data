@@ -1,0 +1,59 @@
+# LAMMPS Data File for Group 6 Tetracyclic Polymer (g=0.445)
+# Complex tetracyclic structure from Cantarella et al. (2022) Figure 4
+# This is the most complex polymer in the study
+
+# System information
+12 atoms
+15 bonds
+0 angles
+0 dihedrals
+0 impropers
+
+# Types
+1 atom types
+1 bond types
+
+# Simulation box
+-30.0 30.0 xlo xhi
+-30.0 30.0 ylo yhi  
+-30.0 30.0 zlo zhi
+
+# Masses
+Masses
+
+1 1.0  # Polymer bead
+
+# Atoms (id type charge x y z)
+Atoms
+
+1  1  0.0   0.0   0.0   0.0   # Central hub
+2  1  0.0   2.5   0.0   0.0   # Branch 1
+3  1  0.0   5.0   0.0   0.0   # End 1
+4  1  0.0   2.5   2.5   0.0   # Branch 2
+5  1  0.0   5.0   2.5   0.0   # End 2
+6  1  0.0   0.0   2.5   0.0   # Connector 1
+7  1  0.0  -2.5   2.5   0.0   # Loop 1
+8  1  0.0  -2.5   0.0   0.0   # Loop 2
+9  1  0.0  -2.5  -2.5   0.0   # Loop 3
+10 1  0.0   0.0  -2.5   0.0   # Loop 4
+11 1  0.0   2.5  -2.5   0.0   # Loop 5
+12 1  0.0   1.25  1.25  1.5   # Cross link
+
+# Bonds (creates tetracyclic structure)
+Bonds
+
+1  1   1   2   # Central connections
+2  1   2   3   # Branch extensions  
+3  1   2   4   # Branch to branch
+4  1   4   5   # Branch extension
+5  1   4   6   # Cross connection
+6  1   6   7   # Loop formation
+7  1   7   8   # Loop continuation
+8  1   8   9   # Loop continuation
+9  1   9  10   # Loop continuation
+10 1  10  11   # Loop continuation
+11 1  11   1   # Loop closure
+12 1   6   1   # Additional cycle
+13 1   8  12   # Cross link
+14 1  12   4   # Cross link
+15 1  10   2   # Additional complexity

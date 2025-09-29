@@ -1,0 +1,60 @@
+# LAMMPS Input Script for Group 6 Tetracyclic Polymer
+# Expected contraction factor g = 0.445 from Figure 4
+# Complex alpha graph topology
+
+# Initialization
+units real
+atom_style molecular
+boundary p p p
+
+# Read polymer structure
+read_data alpha_polymer.data
+
+# Force field - Kremer-Grest model
+pair_style lj/cut 14.0
+pair_coeff 1 1 1.0 1.0 14.0
+pair_modify shift yes
+
+bond_style fene
+bond_coeff 1 30.0 1.5 1.0 1.0
+
+# Neighbor list
+neighbor 0.3 bin
+neigh_modify delay 5
+
+# Groups
+group polymer type 1
+
+# Initialize velocities
+velocity all create 300.0 87654 mom yes rot yes
+
+# Energy minimization
+minimize 1.0e-4 1.0e-6 1000 10000
+
+# Equilibration
+fix 1 all nvt temp 300.0 300.0 100.0
+fix 2 all momentum 100 linear 1 1 1
+
+# Compute radius of gyration
+compute rg polymer gyration
+
+# Output settings
+thermo 1000
+thermo_style custom step temp pe ke etotal c_rg
+
+# Dump trajectory
+dump 1 all custom 10000 trajectory.lammpstrj id type x y z
+
+# Short equilibration run
+run 100000
+
+# Production run for data collection
+reset_timestep 0
+fix avg_rg all ave/time 100 10 1000 c_rg file gyration_data.txt
+
+# Main production run
+run 1000000
+
+# Final output
+print "Simulation completed successfully!"
+print "Final radius of gyration: $(c_rg)"
