@@ -1,5 +1,5 @@
 # Computational-and-Theoretical-Characterization-of-a-Highly-Connected-Tetracyclic-Polymer
-markdown
+
 # Polymer Topology Analysis with LAMMPS
 
 This project uses Molecular Dynamics (MD) simulations via LAMMPS to analyze and compare the conformational properties (specifically the Radius of Gyration, $R_g$) of two different polymer topologies:
