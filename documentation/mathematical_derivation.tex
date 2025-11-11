@@ -1,231 +1,242 @@
+\documentclass[12pt]{article}
+\usepackage[margin=1in]{geometry} % Sets 1-inch margins
+\usepackage{amsmath}              % For math environments
+\usepackage{amssymb}              % For math symbols
+\usepackage{graphicx}             % For images
+\usepackage{braket}               % For the |L - lambda I| set
+\usepackage{adjustbox}            % To scale the large matrix
 
-\documentclass[12pt,a4paper]{article}
-\usepackage[utf8]{inputenc}
-\usepackage{amsmath,amsfonts,amssymb}
-\usepackage{graphicx}
-\usepackage{geometry}
+% --- PACKAGE FOR HEADERS ---
 \usepackage{fancyhdr}
-\usepackage{enumerate}
-\usepackage{float}
-\usepackage{hyperref}
+% --- PACKAGE FOR LINE SPACING ---
+\usepackage{setspace} % <-- ADDED THIS PACKAGE
 
-\geometry{margin=1in}
-\pagestyle{fancy}
-\fancyhf{}
-\rhead{Group 6 - Alpha Graph Analysis}
-\lhead{Topological Polymer Project}
-\rfoot{\thepage}
-
-\title{\textbf{Mathematical Derivation of Radius of Gyration for Alpha Graph Topological Polymer}}
-\author{Group 6 - Chemistry/Engineering Department\\
-Based on Cantarella et al. (2022) Methodology}
-\date{\today}
+% Header settings
+\fancyhf{} % clear all header and footer fields
+\fancyhead[L]{ChE 209: Final Project} % Left Header
+\fancyhead[R]{Derivation for g-factor}  % Right Header
+\fancyfoot[C]{\thepage}               % Page number in center footer
+\renewcommand{\headrulewidth}{0.4pt} % adds a line under the header
 
 \begin{document}
+\thispagestyle{empty} % --- This makes the first page (title/index) clean ---
 
-\maketitle
+% --- TITLE BLOCK ---
+\begin{center}
+    \vspace*{0.5cm} % Space from top
+    
+    {\LARGE  \textit{Course: ChE 209: Introduction to Soft Matters \& Polymers}}
+    
+    \vspace{1cm}
+    
+    {\large \textit{Final Project: Part II}}
+    
+    \vspace{1.5cm}
+    
+    {\LARGE Derivation for the theoretical contraction factors $g(G_{\infty}, G_{\text{tree}\infty} )$}
+    
+    \vspace{1.5cm}
+    
+    {\large Submitted by:}
+    
+    \vspace{0.5cm}
+    
+\begin{center}
+    \begin{minipage}{0.8\textwidth} 
+        \large 
+        \centering 
+        \setstretch{1.3} % <-- Added to fix spacing
+        Vaatsalya Sahu $\vert$ 240008034 \\
+        Vantakula Sujan Kumar $\vert$ 240008035 \\
+        Vinay Gound $\vert$ 240008036 \\
+        Vishal Shakya $\vert$ 240008037 \\
+        Yash Pankaj Chaudhari $\vert$ 240008038 \\
+        Yogen Dand $\vert$ 240008039
+    \end{minipage}
+\end{center}
+% --- END OF TITLE BLOCK ---
 
-\begin{abstract}
-This document presents a complete mathematical derivation for calculating the expected radius of gyration of the alpha graph topological polymer using graph theory principles. Following the methodology established by Cantarella et al. (2022), we employ the Kirchhoff index to determine the polymer size analytically and compare results with molecular dynamics simulations.
-\end{abstract}
+\end{center} % <-- THIS IS THE CORRECTED LINE (moved from below)
 
-\section{Introduction}
+\tableofcontents 
 
-Topological polymers represent a fascinating class of macromolecules whose structure can be modeled using graph theory. The alpha graph, assigned to Group 6, exhibits unique topological constraints that affect its size and conformation in solution. This analysis follows the groundbreaking work of Cantarella et al. (2022) in applying graph theoretical methods to polymer science.
+% --- Page 2 starts here ---
+\newpage 
+\pagestyle{fancy} % --- The header style now applies from this page forward ---
 
-\section{Graph Theoretical Foundation}
+\section{General Formula}
 
-\subsection{Alpha Graph Definition}
-
-Let $G = (V, E)$ represent the alpha graph where:
+The asymptotic g-factor $g(G_{\infty})$ is calculated using the following formula:
+$$
+g(G_{\infty}) = \frac{3}{e(G)^2} \left( \text{Tr}(L^+(G)) + \frac{1}{3}\text{loops}(G) - \frac{1}{6} \right)
+$$
+Where:
 \begin{itemize}
-    \item $V = \{v_1, v_2, \ldots, v_n\}$ is the vertex set with $|V| = v$ vertices
-    \item $E$ is the edge set with $|E| = e$ edges  
-    \item The cycle rank is defined as $\text{Loops}(G) = e - v + 1$
+    \item $e(G)$ is the number of edges in graph $G$.
+    \item $v(G)$ is the number of vertices in graph $G$.
+    \item $\text{loops}(G)$ is the cycle rank of graph $G$, given by:
+    $$
+    \text{loops}(G) = e(G) - v(G) + 1
+    $$
+    \item $\text{Tr}(L^+(G))$ is the trace of the Moore-Penrose pseudoinverse of the normalized graph Laplacian, $L(G)$. This is found by summing the reciprocals of all non-zero eigenvalues ($\lambda_i$) of the $L(G)$ matrix:
+    $$
+    \text{Tr}(L^+(G)) = \sum_{\lambda_i \neq 0} \frac{1}{\lambda_i}
+    $$
+    \item The normalized graph Laplacian $L(G)$ is a $v(G) \times v(G)$ matrix defined as:
+    $$
+    L_{ij} = \begin{cases} 
+        1 - \frac{2 \times (\text{no. of loop edges})}{deg(i)} & \text{if } i = j \\
+        \frac{-R}{\sqrt{deg(i) deg(j)}} & \text{if } v_i, v_j \text{ are joined by } R \text{ edges} \\
+        0 & \text{otherwise}
+    \end{cases}
+    $$
 \end{itemize}
 
-\subsection{Graph Laplacian Matrix}
+\section{Calculation for Alpha-like Polymer ($G_{\alpha}$)}
 
-The Laplacian matrix $L$ of the alpha graph is constructed as:
+\begin{center}
+    % --- IMAGE ADDED HERE ---
+    % Make sure you upload a file named "alpha_graph.png" to your project
+    \includegraphics[width=0.6\textwidth]{alpha_graph.png}
+\end{center}
 
-\begin{equation}
-L = D - A
-\end{equation}
-
-where $D$ is the degree matrix and $A$ is the adjacency matrix. The matrix elements are:
-
-\begin{equation}
-L_{ij} = \begin{cases}
-\deg(v_i) & \text{if } i = j \\
--1 & \text{if vertices } v_i \text{ and } v_j \text{ are adjacent} \\
-0 & \text{otherwise}
-\end{cases}
-\end{equation}
-
-\section{Resistance Distance Theory}
-
-\subsection{Moore-Penrose Pseudoinverse}
-
-The resistance distances are computed using the Moore-Penrose pseudoinverse $L^+$ of the Laplacian matrix. For a symmetric matrix with spectral decomposition $L = U\Sigma U^T$:
-
-\begin{equation}
-L^+ = U\Sigma^+ U^T
-\end{equation}
-
-where $\Sigma^+$ contains the reciprocals of non-zero eigenvalues.
-
-\subsection{Resistance Distance Formula}
-
-For vertices $v_i$ and $v_j$, the resistance distance is given by:
-
-\begin{equation}
-r_{ij} = L^+_{ii} + L^+_{jj} - L^+_{ij} - L^+_{ji}
-\end{equation}
-
-This quantity represents the effective electrical resistance between nodes $i$ and $j$ in the equivalent resistor network.
-
-\section{Kirchhoff Index Calculation}
-
-\subsection{Definition and Computation}
-
-The Kirchhoff index quantifies the total resistance in the graph:
-
-\begin{equation}
-\text{Kf}(G) = \sum_{i<j} r_{ij}
-\end{equation}
-
-Alternatively, using the trace of the pseudoinverse:
-
-\begin{equation}
-\text{Kf}(G) = \frac{v}{2} \text{Tr}(L^+) = \frac{v}{2} \sum_{k=1}^{v-1} \frac{1}{\lambda_k}
-\end{equation}
-
-where $\lambda_k$ are the non-zero eigenvalues of $L$.
-
-\section{Expected Radius of Gyration}
-
-\subsection{Theorem Application}
-
-From Cantarella et al. (2022), Theorem 9 establishes:
-
-\begin{equation}
-\mathbb{E}[R_g^2; G] = \frac{d}{v^2} \times \text{Kf}(G)
-\end{equation}
-
-where $d = 3$ is the spatial dimension.
-
-\subsection{Derivation Steps}
-
-The expected radius of gyration is calculated as follows:
-
-\begin{enumerate}
-\item Compute the eigenvalues $\lambda_1 \geq \lambda_2 \geq \cdots \geq \lambda_{v-1} > \lambda_v = 0$
-\item Calculate the Kirchhoff index:
-\begin{equation}
-\text{Kf}(G) = \frac{v}{2} \sum_{k=1}^{v-1} \frac{1}{\lambda_k}
-\end{equation}
-\item Apply the radius of gyration formula:
-\begin{equation}
-\mathbb{E}[R_g^2] = \frac{3}{v^2} \times \text{Kf}(G)
-\end{equation}
-\item Take the square root:
-\begin{equation}
-\mathbb{E}[R_g] = \sqrt{\frac{3}{v^2} \times \text{Kf}(G)}
-\end{equation}
-\end{enumerate}
-
-\section{Contraction Factor Analysis}
-
-\subsection{Asymptotic Formula}
-
-The contraction factor $g$ represents the ratio of the topological polymer size to a linear chain of the same length:
-
-\begin{equation}
-g(G_\infty) = \frac{3}{e^2} \left[ \text{Tr }L^+(G) + \frac{1}{3}\text{Loops}(G) - \frac{1}{6} \right]
-\end{equation}
-
-\subsection{Physical Interpretation}
-
-This quantity provides insight into how the topological constraints affect the polymer size:
+For this graph, we have:
 \begin{itemize}
-    \item $g < 1$: Polymer is more compact than linear chain
-    \item $g = 1$: Equivalent to linear chain
-    \item $g > 1$: Polymer is more extended than linear chain
+    \item Vertices: $v(G_{\alpha}) = 6$
+    \item Edges: $e(G_{\alpha}) = 9$
 \end{itemize}
+All vertices have a degree of 3 ($deg(v_i) = 3$). A $6 \times 6$ matrix will be formed.
 
-\section{Alpha Graph Specific Calculations}
+\subsection{Laplacian Matrix $L(G_{\alpha})$}
+Since this polymer has no loop edges, all diagonal entries are $L_{ii} = 1 - 0 = 1$.
+$$
+L_{11} = L_{22} = L_{33} = L_{44} = L_{55} = L_{66} = 1
+$$
+For the non-diagonal entries for connected vertices (with $R=1$), the value is:
+$$
+L_{ij} = \frac{-1}{\sqrt{deg(i) deg(j)}} = \frac{-1}{\sqrt{3 \times 3}} = -\frac{1}{3}
+$$
+Calculating the entries for the first row (vertex $v_1$) as an example:
+\begin{align*}
+L_{12} &= -1/3 \quad (\text{connected to } v_2) \\
+L_{13} &= 0 \quad (\text{not connected to } v_3) \\
+L_{14} &= -1/3 \quad (\text{connected to } v_4) \\
+L_{15} &= 0 \quad (\text{not connected to } v_5) \\
+L_{16} &= -1/3 \quad (\text{connected to } v_6)
+\end{align*}
+Similarly, we can calculate all other entries. The full $6 \times 6$ matrix is:
+$$
+\mathbf{L}(G_{\alpha}) = 
+\begin{pmatrix}
+1 & -1/3 & 0 & -1/3 & 0 & -1/3 \\
+-1/3 & 1 & -1/3 & 0 & -1/3 & 0 \\
+0 & -1/3 & 1 & -1/3 & 0 & -1/3 \\
+-1/3 & 0 & -1/3 & 1 & -1/3 & 0 \\
+0 & -1/3 & 0 & -1/3 & 1 & -1/3 \\
+-1/3 & 0 & -1/3 & 0 & -1/3 & 1
+\end{pmatrix}
+$$
 
-\subsection{Graph Properties}
+\subsection{Eigenvalues and Trace}
+To find the eigenvalues, we solve $|L(G_{\alpha}) - \lambda I| = 0$, where $I$ is the identity matrix. 
+After computation, the eigenvalues ($\lambda$) are:
+$$
+\lambda = \{0, 1, 1, 1, 1, 2\}
+$$
+Now, to find $\text{Tr}(L^+(G_{\alpha}))$, we sum the reciprocals of the non-zero eigenvalues:
+$$
+\text{Tr}(L^+(G_{\alpha})) = \frac{1}{1} + \frac{1}{1} + \frac{1}{1} + \frac{1}{1} + \frac{1}{2} = 1 + 1 + 1 + 1 + 0.5 = 4.5
+$$
 
-For the alpha graph topology:
-\begin{align}
-\text{Number of vertices:} \quad v &= \text{[specific to alpha graph]} \\
-\text{Number of edges:} \quad e &= \text{[specific to alpha graph]} \\
-\text{Cycle rank:} \quad \text{Loops}(G) &= e - v + 1
-\end{align}
+\subsection{g-factor $g(G_{\alpha})$}
+First, we find the cycle rank:
+$$
+\text{loops}(G_{\alpha}) = e(G) - v(G) + 1 = 9 - 6 + 1 = 4
+$$
+Now, we calculate the g-factor:
+\begin{align*}
+g(G_{\alpha}) &= \frac{3}{e(G_{\alpha})^2} \left( \text{Tr}(L^+(G_{\alpha})) + \frac{1}{3}\text{loops}(G_{\alpha}) - \frac{1}{6} \right) \\
+&= \frac{3}{9^2} \left( 4.5 + \frac{1}{3}(4) - \frac{1}{6} \right) \\
+&= \frac{3}{81} \left( \frac{9}{2} + \frac{7}{6} \right) \\
+&= \frac{3}{81} \left( \frac{27}{6} + \frac{7}{6} \right) = \frac{3}{81} \left( \frac{34}{6} \right) \\
+&= \frac{3}{81} \left( \frac{17}{3} \right) \\
+&= \frac{17}{81}
+\end{align*}
 
-\subsection{Eigenvalue Problem}
+\section{Calculation for Tree Graph ($G_{\text{tree}}$)}
 
-The characteristic polynomial is obtained from:
-\begin{equation}
-\det(L - \lambda I) = 0
-\end{equation}
+\begin{center}
+    % --- IMAGE ADDED HERE ---
+    % Make sure you upload a file named "tree_graph.png" to your project
+    \includegraphics[width=0.5\textwidth]{tree_graph.png}
+\end{center}
 
-This yields the eigenvalues needed for the Kirchhoff index calculation.
-
-\section{Comparison with Molecular Dynamics}
-
-The theoretical result can be compared with molecular dynamics simulations using LAMMPS. The agreement between analytical and computational results validates both approaches:
-
-\begin{equation}
-\text{Relative Error} = \frac{|R_g^{\text{MD}} - R_g^{\text{theory}}|}{R_g^{\text{theory}}} \times 100\%
-\end{equation}
-
-\section{Results and Discussion}
-
-\subsection{Expected Outcomes}
-
-Based on the methodology, we expect:
-\begin{enumerate}
-    \item A specific radius of gyration value matching Figure 4 of the reference paper
-    \item Good agreement (within 5\%) between MD simulation and theory
-    \item A contraction factor reflecting the alpha graph topology
-\end{enumerate}
-
-\subsection{Validation Criteria}
-
-The results will be validated against:
+For this graph, we have:
 \begin{itemize}
-    \item Published values in Cantarella et al. (2022)
-    \item Consistency between different calculation methods
-    \item Physical reasonableness of the results
+    \item Vertices: $v(G_{\text{tree}}) = 10$
+    \item Edges: $e(G_{\text{tree}}) = 9$
 \end{itemize}
+A $10 \times 10$ matrix will be made.
 
-\section{Conclusion}
+\subsection{Laplacian Matrix $L(G_{\text{tree}})$}
+$$
+\mathbf{L}(G_{\text{tree}}) = 
+\begin{adjustbox}{width=1\textwidth}
+$
+\begin{pmatrix}
+1 & -1/3 & -1/3 & -1/3 & 0 & 0 & 0 & 0 & 0 & 0 \\
+-1/3 & 1 & 0 & 0 & -1/\sqrt{3} & -1/\sqrt{3} & 0 & 0 & 0 & 0 \\
+-1/3 & 0 & 1 & 0 & 0 & 0 & -1/\sqrt{3} & -1/\sqrt{3} & 0 & 0 \\
+-1/3 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & -1/\sqrt{3} & -1/\sqrt{3} \\
+0 & -1/\sqrt{3} & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 \\
+0 & -1/\sqrt{3} & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 \\
+0 & 0 & -1/\sqrt{3} & 0 & 0 & 0 & 1 & 0 & 0 & 0 \\
+0 & 0 & -1/\sqrt{3} & 0 & 0 & 0 & 0 & 1 & 0 & 0 \\
+0 & 0 & 0 & -1/\sqrt{3} & 0 & 0 & 0 & 0 & 1 & 0 \\
+0 & 0 & 0 & -1/\sqrt{3} & 0 & 0 & 0 & 0 & 0 & 1
+\end{pmatrix}
+$
+\end{adjustbox}
+$$
 
-This mathematical framework provides a rigorous approach to calculating the radius of gyration for topological polymers. The combination of graph theory and molecular dynamics offers powerful insights into the relationship between molecular topology and physical properties.
+\subsection{Eigenvalues and Trace}
+After computation, the 10 eigenvalues are:
+\begin{align*}
+\lambda = \Big\{ & 0, 1, 1, 1, 1, 2, \\
+                 & 1-\sqrt{\frac{2}{3}}, 1+\sqrt{\frac{2}{3}}, 1-\sqrt{\frac{2}{3}}, 1+\sqrt{\frac{2}{3}} \Big\}
+\end{align*}
+We sum the reciprocals of all non-zero eigenvalues to get $\text{Tr}(L^+(G_{\text{tree}}))$.
+\begin{align*}
+\text{Sum of } \frac{1}{1} \text{ (4 times)} &= 4 \\
+\text{Sum of } \frac{1}{2} &= 0.5 \\
+\text{Sum of reciprocal pairs:} \quad 2 \times \left( \frac{1}{1 - \sqrt{2/3}} + \frac{1}{1 + \sqrt{2/3}} \right) &= 2 \times \left( \frac{(1 + \sqrt{2/3}) + (1 - \sqrt{2/3})}{(1 - 2/3)} \right) \\
+&= 2 \times \left( \frac{2}{1/3} \right) = 2 \times 6 = 12
+\end{align*}
+Total trace (matching your note):
+$$
+\text{Tr}(L^+(G_{\text{tree}})) = 4 + 0.5 + 12 = 16.5
+$$
 
-The key insight is that the polymer size is fundamentally determined by the graph's connectivity structure, quantified through the Kirchhoff index. This approach bridges mathematics, physics, and chemistry in understanding complex molecular systems.
+\subsection{g-factor $g(G_{\text{tree}})$}
+The cycle rank is:
+$$
+\text{loops}(G_{\text{tree}}) = e(G) - v(G) + 1 = 9 - 10 + 1 = 0 % <-- TYPO FIXED HERE
+$$
+Now, we calculate the g-factor:
+\begin{align*}
+g(G_{\text{tree}}) &= \frac{3}{e(G_{\text{tree}})^2} \left( \text{Tr}(L^+(G_{\text{tree}})) + \frac{1}{3}\text{loops}(G_{\text{tree}}) - \frac{1}{6} \right) \\
+&= \frac{3}{9^2} \left( 16.5 + \frac{1}{3}(0) - \frac{1}{6} \right) \\
+&= \frac{3}{81} \left( 16.5 - \frac{1}{6} \right) \\
+&= \frac{3}{81} \left( \frac{33}{2} - \frac{1}{6} \right) \\
+&= \frac{3}{81} \left( \frac{99}{6} - \frac{1}{6} \right) \\
+&= \frac{3}{81} \left( \frac{98}{6} \right) = \frac{3}{81} \left( \frac{49}{3} \right) \\
+&= \frac{49}{81}
+\end{align*}
 
-\section{References}
-
-\begin{enumerate}
-\item Cantarella, J., Deguchi, T., Shonkwiler, C., \& Uehara, E. (2022). Radius of gyration, contraction factors, and subdivisions of topological polymers. \textit{Journal of Physics A: Mathematical and Theoretical}, 55(47), 475202.
-
-\item Kirchhoff, G. (1847). Über die Auflösung der Gleichungen, auf welche man bei der Untersuchung der linearen Verteilung galvanischer Ströme geführt wird. \textit{Annalen der Physik}, 148(12), 497-508.
-
-\item Klein, D. J., \& Randić, M. (1993). Resistance distance. \textit{Journal of Mathematical Chemistry}, 12(1), 81-95.
-\end{enumerate}
-
-\appendix
-
-\section{Computational Implementation}
-
-The calculations outlined in this document are implemented in the accompanying Python scripts:
-\begin{itemize}
-    \item \texttt{kirchhoff\_calculation.py}: Graph theory calculations
-    \item \texttt{compute\_gyration.py}: MD simulation analysis  
-    \item \texttt{comparison\_analysis.py}: Result comparison
-\end{itemize}
+\section{Final Relative g-factor}
+The relative g-factor is the ratio of $g(G_{\alpha})$ to $g(G_{\text{tree}})$:
+$$
+g_{\text{relative}} = \frac{g(G_{\alpha})}{g(G_{\text{tree}})} = \frac{17/81}{49/81} = \boxed{\frac{17}{49}}
+$$
 
 \end{document}
