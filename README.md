@@ -4,15 +4,12 @@
 
 This project uses **Molecular Dynamics (MD)** simulations with **LAMMPS** to analyze and compare the conformational properties of two different polymer topologies through their **Radius of Gyration ($R_g$)**.
 
-### Polymer Systems
+---
 
-1. **Alpha Polymer**
+## Polymer Systems
 
-   * A three-dimensional tetracyclic (knotted) polymer structure.
-
-2. **Tree Polymer**
-
-   * A two-dimensional highly branched dendrimer-like polymer structure.
+1. **Alpha Polymer** — A three-dimensional tetracyclic (knotted) polymer structure.
+2. **Tree Polymer** — A two-dimensional highly branched dendrimer-like polymer structure.
 
 The workflow is fully automated through a Bash script that:
 
@@ -21,10 +18,7 @@ The workflow is fully automated through a Bash script that:
 3. Performs a comparative analysis using Python.
 4. Computes the ratio:
 
-[
-\frac{\langle R_g^2 \rangle_{\text{alpha}}}
-{\langle R_g^2 \rangle_{\text{tree}}}
-]
+$$\frac{\langle R_g^2 \rangle_{\text{alpha}}}{\langle R_g^2 \rangle_{\text{tree}}}$$
 
 The framework can also be adapted to calculate the standard **g-factor** by comparing a branched polymer with a linear polymer of equal molecular weight.
 
@@ -49,7 +43,7 @@ The framework can also be adapted to calculate the standard **g-factor** by comp
 │   └── compute_gyration.py         # Analysis script
 │
 ├── results/
-│   └──                            # Simulation outputs
+│   └──                             # Simulation outputs
 │
 └── README.md
 ```
@@ -60,15 +54,15 @@ The framework can also be adapted to calculate the standard **g-factor** by comp
 
 ### Simulation Software
 
-* LAMMPS
-* OpenMPI (or another MPI implementation compatible with your LAMMPS build)
-* SLURM Workload Manager
+- LAMMPS
+- OpenMPI (or another MPI implementation compatible with your LAMMPS build)
+- SLURM Workload Manager
 
 ### Python Requirements
 
-* Python 3.x
-* NumPy
-* Matplotlib
+- Python 3.x
+- NumPy
+- Matplotlib
 
 Install Python dependencies using:
 
@@ -84,8 +78,8 @@ pip install numpy matplotlib
 
 The repository already contains the required polymer structures:
 
-* `alpha_polymer.data`
-* `tree_polymer.data`
+- `alpha_polymer.data`
+- `tree_polymer.data`
 
 If you wish to generate new structures (e.g., different polymer sizes), use the original generator scripts:
 
@@ -130,24 +124,17 @@ After completion, the following files will be generated:
 
 ## Output Metrics
 
-The analysis computes:
+The analysis computes the following for each polymer.
 
 ### Mean-Square Radius of Gyration
 
-For each polymer:
-
-[
-\langle R_g^2 \rangle
-]
+$$\langle R_g^2 \rangle$$
 
 ### Comparative Ratio
 
-[
-\frac{\langle R_g^2 \rangle_{\text{alpha}}}
-{\langle R_g^2 \rangle_{\text{tree}}}
-]
+$$\frac{\langle R_g^2 \rangle_{\text{alpha}}}{\langle R_g^2 \rangle_{\text{tree}}}$$
 
-Only the equilibrated portion of the simulation (last 25%) is used in the calculation.
+> Only the equilibrated portion of the simulation (last 25%) is used in the calculation.
 
 ---
 
@@ -155,19 +142,17 @@ Only the equilibrated portion of the simulation (last 25%) is used in the calcul
 
 ### `run_simulation.sh`
 
-Main execution script for the project.
+Main execution script for the project. Responsibilities:
 
-#### Responsibilities
+- Defines the polymer systems to simulate.
+- Executes LAMMPS using MPI.
+- Passes the appropriate `.data` and `.in` files.
+- Runs simulations sequentially.
+- Launches the Python analysis script after all simulations finish.
 
-* Defines the polymer systems to simulate.
-* Executes LAMMPS using MPI.
-* Passes the appropriate `.data` and `.in` files.
-* Runs simulations sequentially.
-* Launches the Python analysis script after all simulations finish.
+**Workflow:**
 
-#### Example Workflow
-
-```text
+```
 Alpha Polymer Simulation
         ↓
 Tree Polymer Simulation
@@ -183,15 +168,17 @@ Generate Plots & Results
 
 LAMMPS input templates defining the simulation protocol.
 
-#### Simulation Settings
+**Simulation Settings:**
 
-* Units: `real`
-* Pair Potential: Lennard-Jones (`lj/cut`)
-* Bond Potential: FENE
-* Ensemble: NVT with Langevin thermostat
-* Temperature: 300 K
+| Parameter     | Value                        |
+| ------------- | ---------------------------- |
+| Units         | `real`                       |
+| Pair Potential| Lennard-Jones (`lj/cut`)     |
+| Bond Potential| FENE                         |
+| Ensemble      | NVT with Langevin thermostat |
+| Temperature   | 300 K                        |
 
-#### Simulation Procedure
+**Simulation Procedure:**
 
 1. Read polymer topology.
 2. Perform multi-stage energy minimization.
@@ -199,7 +186,7 @@ LAMMPS input templates defining the simulation protocol.
 4. Run production dynamics.
 5. Compute and save radius of gyration data.
 
-#### Radius of Gyration Calculation
+**Radius of Gyration Calculation:**
 
 ```lammps
 compute myRg all gyration
@@ -211,49 +198,20 @@ compute myRg all gyration
 
 Post-processing and analysis script.
 
-#### Functionality
+**Functionality:**
 
 1. Loads gyration data from both simulations.
 2. Discards the first 75% of frames as equilibration.
-3. Computes:
-
-[
-\langle R_g^2 \rangle_{\text{alpha}}
-]
-
-and
-
-[
-\langle R_g^2 \rangle_{\text{tree}}
-]
-
+3. Computes $\langle R_g^2 \rangle_{\text{alpha}}$ and $\langle R_g^2 \rangle_{\text{tree}}$.
 4. Calculates the final ratio:
 
-[
-\frac{\langle R_g^2 \rangle_{\text{alpha}}}
-{\langle R_g^2 \rangle_{\text{tree}}}
-]
+$$\frac{\langle R_g^2 \rangle_{\text{alpha}}}{\langle R_g^2 \rangle_{\text{tree}}}$$
 
-5. Generates:
-
-   * Comparative time-series plots
-   * Distribution plots
-   * Summary statistics
-
-6. Saves:
-
-   * `g_factor_analysis_results.png`
-   * `g_factor_results.txt`
+5. Generates comparative time-series plots and distribution plots.
+6. Saves `g_factor_analysis_results.png` and `g_factor_results.txt`.
 
 ---
 
 ## Research Objective
 
-This project investigates how polymer topology influences conformational size and compactness.
-
-By comparing a highly connected tetracyclic polymer with a branched tree-like polymer, the study quantifies topology-dependent scaling behavior through the radius of gyration and related shape descriptors.
-
----
-
-
-
+This project investigates how polymer topology influences conformational size and compactness. By comparing a highly connected tetracyclic polymer with a branched tree-like polymer, the study quantifies topology-dependent scaling behavior through the radius of gyration and related shape descriptors.
